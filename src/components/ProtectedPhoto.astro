@@ -1,0 +1,55 @@
+---
+/**
+ * Displays a photograph with deterrents against casual download
+ * (context menu, drag, overlay). Determined users can still capture
+ * via DevTools — this is UX friction, not DRM.
+ */
+interface Props {
+	src: string;
+	alt: string;
+	loading?: 'lazy' | 'eager';
+	class?: string;
+}
+
+const { src, alt, loading = 'lazy', class: className } = Astro.props;
+---
+
+<div class:list={['protected-photo', className]}>
+	<img
+		src={src}
+		alt={alt}
+		loading={loading}
+		draggable="false"
+		oncontextmenu="return false"
+	/>
+	<span class="protected-photo__shield" aria-hidden="true"></span>
+</div>
+
+<style>
+	.protected-photo {
+		position: relative;
+		overflow: hidden;
+		border-radius: var(--radius);
+		background: var(--photo-frame-bg);
+		-webkit-user-select: none;
+		user-select: none;
+	}
+
+	.protected-photo img {
+		width: 100%;
+		height: 100%;
+		display: block;
+		object-fit: cover;
+		pointer-events: none;
+		-webkit-user-drag: none;
+		user-select: none;
+	}
+
+	.protected-photo__shield {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		/* Transparent hit target blocks right-click / long-press on the image */
+		background: transparent;
+	}
+</style>

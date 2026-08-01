@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../consts';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const isExternal = Boolean(post.data.externalUrl);
+const href = isExternal ? post.data.externalUrl! : withBase(`/blog/${post.id}`);
+---
+
+<article class="post-card">
+	<p class="post-meta">
+		<time datetime={post.data.date.toISOString()}>
+			{
+				post.data.date.toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'short',
+					day: 'numeric',
+				})
+			}
+		</time>
+		{
+			post.data.tags.length > 0 && (
+				<>
+					<span aria-hidden="true">·</span>
+					<span>{post.data.tags.slice(0, 2).join(', ')}</span>
+				</>
+			)
+		}
+		{
+			isExternal && (
+				<>
+					<span aria-hidden="true">·</span>
+					<span>External</span>
+				</>
+			)
+		}
+	</p>
+	<h3>
+		<a
+			href={href}
+			target={isExternal ? '_blank' : undefined}
+			rel={isExternal ? 'noopener noreferrer' : undefined}
+		>
+			{post.data.title}
+			{isExternal && <span class="ext" aria-hidden="true"> ↗</span>}
+		</a>
+	</h3>
+	<p class="muted">{post.data.description}</p>
+</article>
+
+<style>
+	.post-card {
+		padding-block: 1.25rem;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.post-card:first-child {
+		border-top: 1px solid var(--line);
+	}
+
+	.post-meta {
+		margin: 0 0 0.4rem;
+		font-size: 0.85rem;
+		color: var(--ink-muted);
+		font-family: var(--font-display);
+		font-weight: 600;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	h3 {
+		margin-bottom: 0.4rem;
+	}
+
+	h3 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	h3 a:hover {
+		color: var(--accent);
+	}
+
+	.ext {
+		font-weight: 500;
+		opacity: 0.7;
+	}
+
+	.muted {
+		margin-bottom: 0;
+	}
+</style>

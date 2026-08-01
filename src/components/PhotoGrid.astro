@@ -1,0 +1,109 @@
+---
+import { withBase } from '../consts';
+import type { CollectionEntry } from 'astro:content';
+import ProtectedPhoto from './ProtectedPhoto.astro';
+
+interface Props {
+	photos: CollectionEntry<'photos'>[];
+	showMeta?: boolean;
+}
+
+const { photos, showMeta = true } = Astro.props;
+---
+
+{
+	photos.length === 0 ? (
+		<p class="muted">No photographs in this set yet.</p>
+	) : (
+		<ul class="photo-grid">
+			{photos.map((photo, i) => (
+				<li class:list={['photo-item', i % 5 === 0 && 'is-wide']} style={`--i: ${i}`}>
+					<figure>
+						<ProtectedPhoto
+							src={withBase(photo.data.src)}
+							alt={photo.data.alt}
+							class={`frame${i % 5 === 0 ? ' is-wide' : ''}`}
+						/>
+						{showMeta && (
+							<figcaption>
+								<span class="photo-title">{photo.data.title}</span>
+								<span class="photo-meta">{photo.data.genre}</span>
+							</figcaption>
+						)}
+					</figure>
+				</li>
+			))}
+		</ul>
+	)
+}
+
+<style>
+	.photo-grid {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		gap: 0.75rem;
+	}
+
+	.photo-item {
+		grid-column: span 6;
+		opacity: 0;
+		animation: rise 650ms var(--ease) both;
+		animation-delay: calc(var(--i) * 70ms);
+	}
+
+	.photo-item.is-wide {
+		grid-column: span 12;
+	}
+
+	@media (min-width: 720px) {
+		.photo-item {
+			grid-column: span 4;
+		}
+
+		.photo-item.is-wide {
+			grid-column: span 8;
+		}
+	}
+
+	figure {
+		margin: 0;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.frame {
+		aspect-ratio: 4 / 3;
+		transition: transform 500ms var(--ease), filter 500ms var(--ease);
+	}
+
+	.frame.is-wide {
+		aspect-ratio: 16 / 9;
+	}
+
+	.photo-item:hover .frame {
+		transform: scale(1.02);
+		filter: saturate(1.05);
+	}
+
+	figcaption {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.75rem;
+		font-size: 0.9rem;
+	}
+
+	.photo-title {
+		font-family: var(--font-display);
+		font-weight: 600;
+	}
+
+	.photo-meta {
+		color: var(--ink-muted);
+		text-transform: capitalize;
+	}
+</style>

@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Timeline from '../components/Timeline.astro';
+
+const items = (await getCollection('achievements')).sort(
+	(a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<BaseLayout
+	title="Achievements"
+	description="Awards, talks, certifications, and contest mentions — chronological."
+>
+	<section class="section">
+		<div class="wrap narrow">
+			<div class="section-intro rise">
+				<p class="eyebrow">Milestones</p>
+				<h1>Achievements</h1>
+				<p>Engineering and photography milestones in one timeline. Add files under <code>src/content/achievements/</code>.</p>
+			</div>
+			<div class="rise rise-delay-1">
+				<Timeline items={items} />
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.narrow {
+		max-width: 42rem;
+	}
+</style>

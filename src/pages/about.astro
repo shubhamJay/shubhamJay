@@ -1,0 +1,113 @@
+---
+import { getEntry, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { PROFILE, SOCIAL, withBase } from '../consts';
+
+const about = await getEntry('pages', 'about');
+if (!about) {
+	throw new Error('Missing src/content/pages/about.md');
+}
+const { Content } = await render(about);
+---
+
+<BaseLayout title={about.data.title} description={about.data.description}>
+	<section class="section">
+		<div class="wrap about-grid">
+			<div class="about-copy">
+				<p class="eyebrow">About</p>
+				<h1 class="rise">{about.data.title}</h1>
+				{
+					about.data.description && (
+						<p class="lead rise rise-delay-1">{about.data.description}</p>
+					)
+				}
+				<div class="prose rise rise-delay-2">
+					<Content />
+				</div>
+				<ul class="social-list rise rise-delay-3">
+					<li><a href={SOCIAL.github}>GitHub</a></li>
+					<li><a href={SOCIAL.linkedin}>LinkedIn</a></li>
+					<li><a href={SOCIAL.email}>Email</a></li>
+					<li><a href={SOCIAL.cvRequest}>Request CV</a></li>
+				<li>
+					<a href={SOCIAL.instagramMemories} rel="noopener noreferrer" target="_blank">
+						Instagram · @memories_in_jpg
+					</a>
+				</li>
+				<li>
+					<a href={SOCIAL.instagramClicks} rel="noopener noreferrer" target="_blank">
+						Instagram · @clicks.by.shubham
+					</a>
+				</li>
+					<li><a href={withBase('/work')}>Engineering work</a></li>
+					<li><a href={withBase('/photography')}>Photography</a></li>
+				</ul>
+			</div>
+			<figure class="portrait rise rise-delay-1">
+				<img
+					src={withBase(PROFILE.src)}
+					alt={PROFILE.alt}
+					width="701"
+					height="1024"
+					loading="eager"
+					decoding="async"
+				/>
+			</figure>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.about-grid {
+		display: grid;
+		gap: 2.5rem;
+		align-items: start;
+	}
+
+	@media (min-width: 800px) {
+		.about-grid {
+			grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.7fr);
+			gap: 3rem;
+		}
+	}
+
+	.lead {
+		font-size: 1.2rem;
+		color: var(--ink-muted);
+		max-width: 36rem;
+		margin-bottom: 2rem;
+	}
+
+	.portrait {
+		margin: 0;
+		border-radius: var(--radius);
+		overflow: hidden;
+		background: var(--photo-frame-bg);
+		border: 1px solid var(--line);
+		max-width: 22rem;
+		justify-self: center;
+		width: 100%;
+	}
+
+	.portrait img {
+		width: 100%;
+		height: auto;
+		display: block;
+		object-fit: contain;
+	}
+
+	.social-list {
+		list-style: none;
+		padding: 0;
+		margin: 2.5rem 0 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.25rem;
+	}
+
+	.social-list a {
+		font-family: var(--font-display);
+		font-weight: 600;
+		text-decoration: none;
+	}
+</style>

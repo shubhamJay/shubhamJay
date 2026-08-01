@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ExperienceList from '../components/ExperienceList.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { SOCIAL } from '../consts';
+
+const experience = (await getCollection('experience')).sort(
+	(a, b) => a.data.order - b.data.order,
+);
+
+const projects = (await getCollection('projects')).sort(
+	(a, b) => a.data.order - b.data.order || b.data.year - a.data.year,
+);
+---
+
+<BaseLayout
+	title="Work"
+	description="Experience and selected engineering projects — backend, data systems, and AI-augmented delivery."
+>
+	<section class="section">
+		<div class="wrap">
+			<div class="section-intro rise">
+				<p class="eyebrow">Engineering</p>
+				<h1>Work</h1>
+				<p>
+					Career experience and selected projects from fintech, data platforms, and
+					scientific software.
+					<a href={SOCIAL.cvRequest}>Request a CV by email</a>
+					(no phone number published on this site).
+				</p>
+			</div>
+
+			<div class="block rise rise-delay-1">
+				<h2>Experience</h2>
+				<ExperienceList items={experience} />
+			</div>
+
+			<div class="block rise rise-delay-2">
+				<h2>Selected projects</h2>
+				{projects.map((project) => <ProjectCard project={project} />)}
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.block {
+		margin-top: 2.75rem;
+	}
+
+	.block h2 {
+		margin-bottom: 1.25rem;
+	}
+</style>

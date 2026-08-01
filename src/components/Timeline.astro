@@ -1,0 +1,108 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+	items: CollectionEntry<'achievements'>[];
+}
+
+const { items } = Astro.props;
+
+const categoryLabel: Record<string, string> = {
+	award: 'Award',
+	talk: 'Talk',
+	cert: 'Certification',
+	contest: 'Contest',
+	other: 'Milestone',
+};
+---
+
+<ol class="timeline">
+	{
+		items.map((item, i) => (
+			<li class="timeline-item" style={`--i: ${i}`}>
+				<div class="timeline-rail" aria-hidden="true" />
+				<div class="timeline-body">
+					<p class="timeline-meta">
+						<time datetime={item.data.date.toISOString()}>
+							{item.data.date.toLocaleDateString('en-US', {
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric',
+							})}
+						</time>
+						<span class="dot">·</span>
+						<span>{categoryLabel[item.data.category]}</span>
+					</p>
+					<h3>{item.data.title}</h3>
+					<p class="muted">{item.data.summary}</p>
+					{item.data.link && (
+						<p>
+							<a href={item.data.link} rel="noopener noreferrer" target="_blank">
+								Details
+							</a>
+						</p>
+					)}
+				</div>
+			</li>
+		))
+	}
+</ol>
+
+<style>
+	.timeline {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0;
+	}
+
+	.timeline-item {
+		display: grid;
+		grid-template-columns: 1.25rem 1fr;
+		gap: 1rem;
+		padding-bottom: 2rem;
+		opacity: 0;
+		animation: rise 600ms var(--ease) both;
+		animation-delay: calc(var(--i) * 80ms);
+	}
+
+	.timeline-rail {
+		position: relative;
+		justify-self: center;
+		width: 1px;
+		background: var(--line);
+	}
+
+	.timeline-rail::before {
+		content: '';
+		position: absolute;
+		top: 0.35rem;
+		left: 50%;
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		background: var(--accent);
+		transform: translateX(-50%);
+		box-shadow: 0 0 0 4px var(--accent-soft);
+	}
+
+	.timeline-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin: 0 0 0.35rem;
+		font-size: 0.85rem;
+		color: var(--ink-muted);
+		font-family: var(--font-display);
+		font-weight: 600;
+	}
+
+	.timeline-body h3 {
+		margin-bottom: 0.35rem;
+	}
+
+	.timeline-body p:last-child {
+		margin-bottom: 0;
+	}
+</style>

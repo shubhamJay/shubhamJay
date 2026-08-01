@@ -1,0 +1,39 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoGrid from '../../components/PhotoGrid.astro';
+import { withBase } from '../../consts';
+
+export async function getStaticPaths() {
+	const genres = await getCollection('genres');
+	return genres.map((genre) => ({
+		params: { genre: genre.id },
+		props: { genre },
+	}));
+}
+
+const { genre } = Astro.props;
+const { Content } = await render(genre);
+
+const photos = (await getCollection('photos'))
+	.filter((p) => p.data.genre === genre.id)
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title={genre.data.label} description={genre.data.description}>
+	<section class="section">
+		<div class="wrap">
+			<p class="eyebrow">
+				<a href={withBase('/photography')}>Photography</a> / Genre
+			</p>
+			<h1 class="rise">{genre.data.label}</h1>
+			<p class="muted rise rise-delay-1">{genre.data.description}</p>
+			<div class="prose rise rise-delay-1">
+				<Content />
+			</div>
+			<div class="rise rise-delay-2" style="margin-top: 2rem">
+				<PhotoGrid photos={photos} />
+			</div>
+		</div>
+	</section>
+</BaseLayout>

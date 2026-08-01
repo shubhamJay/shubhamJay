@@ -1,0 +1,61 @@
+---
+import { SITE_TITLE, SOCIAL, withBase } from '../consts';
+---
+
+<footer class="footer">
+	<div class="wrap footer-inner">
+		<p class="footer-brand">{SITE_TITLE}</p>
+		<p class="muted">Engineering · Photography · Travel · Badminton · Carrom · Table tennis</p>
+		<nav class="footer-links" aria-label="Social">
+			<a href={SOCIAL.github}>GitHub</a>
+			<a href={SOCIAL.linkedin}>LinkedIn</a>
+			<a href={SOCIAL.email}>Email</a>
+			<a href={SOCIAL.instagramMemories} rel="noopener noreferrer" target="_blank"
+				>@memories_in_jpg</a
+			>
+			<a href={SOCIAL.instagramClicks} rel="noopener noreferrer" target="_blank"
+				>@clicks.by.shubham</a
+			>
+			<a href={withBase('/about')}>About</a>
+		</nav>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		border-top: 1px solid var(--line);
+		padding-block: 2.5rem;
+		margin-top: auto;
+	}
+
+	.footer-inner {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.footer-brand {
+		font-family: var(--font-display);
+		font-weight: 700;
+		font-size: 1.1rem;
+		margin: 0;
+	}
+
+	.footer-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.25rem;
+		margin-top: 0.75rem;
+	}
+
+	.footer-links a {
+		font-family: var(--font-display);
+		font-size: 0.85rem;
+		font-weight: 600;
+		text-decoration: none;
+		color: var(--ink-muted);
+	}
+
+	.footer-links a:hover {
+		color: var(--accent);
+	}
+</style>

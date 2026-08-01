@@ -1,0 +1,168 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoGrid from '../../components/PhotoGrid.astro';
+import ProtectedPhoto from '../../components/ProtectedPhoto.astro';
+import { SOCIAL, withBase } from '../../consts';
+
+const genres = (await getCollection('genres')).sort((a, b) => a.data.order - b.data.order);
+const seriesList = (await getCollection('series')).sort((a, b) => b.data.year - a.data.year);
+const featured = (await getCollection('photos'))
+	.filter((p) => p.data.featured)
+	.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+	.slice(0, 6);
+---
+
+<BaseLayout
+	title="Photography"
+	description="Genres and series — frames collected over walks, weather, and weekends."
+>
+	<section class="section">
+		<div class="wrap">
+			<div class="section-intro rise">
+				<p class="eyebrow">Portfolio</p>
+				<h1>Photography</h1>
+				<p>
+					Browse by genre or open a named series. More on Instagram:{' '}
+					<a href={SOCIAL.instagramMemories} rel="noopener noreferrer" target="_blank">
+						@memories_in_jpg
+					</a>
+					{' '}and{' '}
+					<a href={SOCIAL.instagramClicks} rel="noopener noreferrer" target="_blank">
+						@clicks.by.shubham
+					</a>.
+				</p>
+
+			</div>
+
+			<div class="genre-row rise rise-delay-1">
+				{
+					genres.map((genre) => (
+						<a class="genre-chip" href={withBase(`/photography/${genre.id}`)}>
+							<span class="genre-label">{genre.data.label}</span>
+							<span class="muted">{genre.data.description}</span>
+						</a>
+					))
+				}
+			</div>
+
+			<div class="block rise rise-delay-2">
+				<h2>Series</h2>
+				<ul class="series-list">
+					{
+						seriesList.map((s) => (
+							<li>
+								<a href={withBase(`/photography/series/${s.id}`)}>
+									<ProtectedPhoto
+										src={withBase(s.data.cover)}
+										alt=""
+										class="series-cover"
+									/>
+									<div>
+										<h3>{s.data.title}</h3>
+										<p class="muted">
+											{s.data.year}
+											{s.data.genres.length > 0 && ` · ${s.data.genres.join(', ')}`}
+										</p>
+										<p>{s.data.summary}</p>
+									</div>
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+
+			<div class="block rise rise-delay-3">
+				<h2>Featured frames</h2>
+				<PhotoGrid photos={featured} />
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.genre-row {
+		display: grid;
+		gap: 0.75rem;
+		margin-bottom: 3rem;
+	}
+
+	@media (min-width: 720px) {
+		.genre-row {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	.genre-chip {
+		display: grid;
+		gap: 0.35rem;
+		padding: 1.1rem 1.15rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		text-decoration: none;
+		color: inherit;
+		background: color-mix(in srgb, var(--bg-elevated) 70%, transparent);
+		transition:
+			border-color 200ms var(--ease),
+			transform 200ms var(--ease);
+	}
+
+	.genre-chip:hover {
+		border-color: var(--accent);
+		transform: translateY(-2px);
+		color: inherit;
+	}
+
+	.genre-label {
+		font-family: var(--font-display);
+		font-weight: 700;
+		font-size: 1.15rem;
+	}
+
+	.block {
+		margin-top: 3rem;
+	}
+
+	.series-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 1.25rem;
+	}
+
+	.series-list a {
+		display: grid;
+		gap: 1rem;
+		text-decoration: none;
+		color: inherit;
+		padding-bottom: 1.25rem;
+		border-bottom: 1px solid var(--line);
+	}
+
+	@media (min-width: 720px) {
+		.series-list a {
+			grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
+			align-items: center;
+		}
+	}
+
+	.series-list :global(.series-cover) {
+		width: 100%;
+		aspect-ratio: 16 / 10;
+		transition: transform 450ms var(--ease);
+	}
+
+	.series-list a:hover :global(.series-cover) {
+		transform: scale(1.02);
+	}
+
+	.series-list h3 {
+		color: var(--ink);
+	}
+
+	.series-list a:hover h3 {
+		color: var(--accent);
+	}
+</style>

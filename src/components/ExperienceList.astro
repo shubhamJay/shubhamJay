@@ -1,0 +1,118 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
+
+interface Props {
+	items: CollectionEntry<'experience'>[];
+	compact?: boolean;
+}
+
+const { items, compact = false } = Astro.props;
+
+const rendered = await Promise.all(
+	items.map(async (item) => ({
+		item,
+		Content: compact ? null : (await render(item)).Content,
+	})),
+);
+---
+
+<ol class:list={['experience-list', compact && 'is-compact']}>
+	{
+		rendered.map(({ item, Content }, i) => (
+			<li class="experience-item" style={`--i: ${i}`}>
+				<div class="experience-rail" aria-hidden="true" />
+				<div class="experience-body">
+					<p class="experience-meta">
+						<span>
+							{item.data.start} – {item.data.end}
+						</span>
+					</p>
+					<h3>{item.data.role}</h3>
+					<p class="company">{item.data.company}</p>
+					<p class="muted">{item.data.summary}</p>
+					{!compact && Content && (
+						<div class="experience-detail prose">
+							<Content />
+						</div>
+					)}
+					{item.data.tech.length > 0 && (
+						<p class="tech">{item.data.tech.slice(0, compact ? 6 : 12).join(' · ')}</p>
+					)}
+				</div>
+			</li>
+		))
+	}
+</ol>
+
+<style>
+	.experience-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.experience-item {
+		display: grid;
+		grid-template-columns: 1.25rem 1fr;
+		gap: 1rem;
+		padding-bottom: 2rem;
+		opacity: 0;
+		animation: rise 600ms var(--ease) both;
+		animation-delay: calc(var(--i) * 70ms);
+	}
+
+	.is-compact .experience-item {
+		padding-bottom: 1.5rem;
+	}
+
+	.experience-rail {
+		position: relative;
+		justify-self: center;
+		width: 1px;
+		background: var(--line);
+	}
+
+	.experience-rail::before {
+		content: '';
+		position: absolute;
+		top: 0.4rem;
+		left: 50%;
+		width: 0.55rem;
+		height: 0.55rem;
+		border-radius: 50%;
+		background: var(--accent);
+		transform: translateX(-50%);
+		box-shadow: 0 0 0 4px var(--accent-soft);
+	}
+
+	.experience-meta {
+		margin: 0 0 0.3rem;
+		font-family: var(--font-display);
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--ink-muted);
+	}
+
+	.company {
+		margin: 0 0 0.5rem;
+		font-weight: 600;
+		color: var(--accent);
+	}
+
+	.tech {
+		margin: 0.75rem 0 0;
+		font-size: 0.85rem;
+		color: var(--ink-muted);
+		line-height: 1.45;
+	}
+
+	.experience-detail {
+		margin-top: 0.75rem;
+		font-size: 0.98rem;
+	}
+
+	.experience-detail :global(ul) {
+		margin: 0.4rem 0 0;
+	}
+</style>

@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+interface Props {
+	title?: string;
+	description?: string;
+	fullBleed?: boolean;
+}
+
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	fullBleed = false,
+} = Astro.props;
+
+const pageTitle = title === SITE_TITLE ? title : `${title} · ${SITE_TITLE}`;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="light dark" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+		<title>{pageTitle}</title>
+		<script is:inline>
+			(function () {
+				try {
+					var stored = localStorage.getItem('theme');
+					var theme =
+						stored === 'light' || stored === 'dark'
+							? stored
+							: window.matchMedia('(prefers-color-scheme: dark)').matches
+								? 'dark'
+								: 'light';
+					document.documentElement.setAttribute('data-theme', theme);
+					document.documentElement.style.colorScheme = theme;
+				} catch (e) {
+					document.documentElement.setAttribute('data-theme', 'light');
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<div class:list={['site-shell', fullBleed && 'is-full-bleed']}>
+			<Nav />
+			<main class="site-main">
+				<slot />
+			</main>
+			<Footer />
+		</div>
+	</body>
+</html>

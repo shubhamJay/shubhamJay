@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const posts = (await getCollection('blog', ({ data }) => {
+	return import.meta.env.PROD ? data.draft !== true : true;
+})).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<BaseLayout title="Blog" description="Notes on engineering, photography, and process.">
+	<section class="section">
+		<div class="wrap narrow">
+			<div class="section-intro rise">
+				<p class="eyebrow">Writing</p>
+				<h1>Blog</h1>
+				<p>Notes and links from talks, Medium, and published articles. External pieces open in a new tab.</p>
+			</div>
+			<div class="rise rise-delay-1">
+				{posts.map((post) => <PostCard post={post} />)}
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.narrow {
+		max-width: 42rem;
+	}
+</style>

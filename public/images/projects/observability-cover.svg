@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#0f1418"/>
+  <g stroke="#1a7a6d" stroke-width="2" fill="none" opacity="0.7">
+    <polyline points="80,720 220,640 360,680 500,420 640,480 780,300 920,360 1060,220 1200,280 1340,160 1520,200"/>
+  </g>
+  <g fill="#e8a54b" opacity="0.8">
+    <circle cx="500" cy="420" r="6"/>
+    <circle cx="780" cy="300" r="6"/>
+    <circle cx="1060" cy="220" r="6"/>
+  </g>
+  <text x="80" y="100" fill="#eef1f4" font-family="system-ui,sans-serif" font-size="42" font-weight="600">observability</text>
+</svg>

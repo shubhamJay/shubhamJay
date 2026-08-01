@@ -1,0 +1,98 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { withBase } from '../consts';
+
+interface Props {
+	project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+---
+
+<article class="project">
+	{
+		project.data.cover && (
+			<img
+				class="project-cover"
+				src={withBase(project.data.cover)}
+				alt=""
+				loading="lazy"
+			/>
+		)
+	}
+	<div class="project-body">
+		<p class="project-meta">
+			<span>{project.data.year}</span>
+			{
+				project.data.stack.length > 0 && (
+					<>
+						<span aria-hidden="true">·</span>
+						<span>{project.data.stack.slice(0, 3).join(' / ')}</span>
+					</>
+				)
+			}
+		</p>
+		<h3>{project.data.title}</h3>
+		<p class="muted">{project.data.summary}</p>
+		{
+			project.data.links.length > 0 && (
+				<p class="project-links">
+					{project.data.links.map((link) => (
+						<a href={link.url} rel="noopener noreferrer" target="_blank">
+							{link.label}
+						</a>
+					))}
+				</p>
+			)
+		}
+	</div>
+</article>
+
+<style>
+	.project {
+		display: grid;
+		gap: 1.25rem;
+		padding-block: 1.75rem;
+		border-bottom: 1px solid var(--line);
+	}
+
+	@media (min-width: 720px) {
+		.project {
+			grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+			align-items: center;
+		}
+	}
+
+	.project:first-child {
+		border-top: 1px solid var(--line);
+	}
+
+	.project-cover {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		border-radius: var(--radius);
+		background: var(--photo-frame-bg);
+	}
+
+	.project-meta {
+		margin: 0 0 0.4rem;
+		font-size: 0.85rem;
+		color: var(--ink-muted);
+		font-family: var(--font-display);
+		font-weight: 600;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	.project-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin: 0.75rem 0 0;
+		font-family: var(--font-display);
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+</style>
