@@ -5,5 +5,5 @@ import { defineConfig } from 'astro/config';
 // If you later use a user site repo named shubhamJay.github.io, remove `base`.
 export default defineConfig({
 	site: 'https://shubhamJay.github.io',
-	base: '/shubhamJay',
+	base: '/shubhamJay/',
 });
